@@ -1,0 +1,23 @@
+# Starter dependencies — Claude Code can pin exact versions during scaffolding.
+
+# API
+fastapi
+uvicorn[standard]
+python-dotenv
+
+# RAG core
+langchain
+langchain-community
+langchain-huggingface
+sentence-transformers
+faiss-cpu
+pypdf
+
+# LLM providers (install what you actually use)
+langchain-anthropic        # Claude
+langchain-openai           # OpenAI-compatible: Grok / Groq / OpenRouter
+langchain-google-genai     # Gemini
+langchain-ollama           # local Ollama
+
+# Tests
+pytest

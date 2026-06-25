@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Secrets — never commit
+.env
+.env.local
+
+# Vector index is derived from data/docs/ by `python -m src.ingest`.
+# Kept out of git: embeddings are local/free, so deploy can rebuild it at startup.
+# (If you ever want zero cold-start cost on deploy, commit it instead of ignoring it.)
+data/index/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+CLAUDE.md

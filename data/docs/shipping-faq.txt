@@ -1,0 +1,59 @@
+MAKROSHIP — SHIPPING & CUSTOMS FAQ
+(Sample data for RAG testing. Plain-text format on purpose, to exercise the .txt loader.)
+
+Q: Why is my shipment stuck at customs?
+A: A shipment usually sits at customs (status CUS-HOLD or CUS-INSP) for one of three reasons:
+the paperwork is incomplete, the declared value looks inconsistent with the contents, or the
+goods were selected for a random physical inspection. The most common single cause is a
+missing or unclear commercial invoice. If a document is missing, the importer is contacted to
+supply it before the shipment can move.
+
+Q: How long does customs clearance take?
+A: A straightforward clearance (status CUS-SUB to CLR) is often the same day or one business
+day. A documentary hold (CUS-HOLD) typically adds 2 to 5 business days. A physical inspection
+(CUS-INSP) typically adds 3 to 7 business days. Paying any assessed duty promptly is the
+single biggest thing the importer can do to avoid extra delay.
+
+Q: Who pays the customs duty and VAT?
+A: By default the importer (the receiver) pays import duty and VAT. The exception is when the
+shipment is sent under the Incoterm DDP (Delivered Duty Paid), in which case the sender has
+agreed to cover those charges. The Incoterm chosen at the time of sale decides who pays.
+
+Q: What happens if I do not pay the import charges?
+A: The shipment stays in DUTY-DUE status and is not released. After a holding period
+(commonly 10 to 15 calendar days, depending on the destination) the parcel is returned to the
+sender with status RTN, and return transport costs may be deducted.
+
+Q: How is the duty amount calculated?
+A: Duty is based on the customs value of the goods (usually the price on the commercial
+invoice, sometimes plus freight and insurance), the product's tariff classification (its HS
+code), and the country of origin. VAT is then applied on top. Because the HS code and origin
+both affect the rate, an accurate invoice and a certificate of origin can change the final
+amount.
+
+Q: Can I track my shipment, and what do the status codes mean?
+A: Yes. Every shipment has a tracking number issued at the REG (Registered) stage. The status
+codes follow the journey from pickup through transit, customs, and delivery. See the
+"Customs & Shipment Status Glossary" document for the meaning and typical duration of each
+code.
+
+Q: My tracking shows EXC (Exception). What does that mean?
+A: EXC is a generic flag that something interrupted the shipment — a bad or incomplete
+address, a weather or transport disruption, a damaged shipping label, or a failed delivery
+attempt. The tracking note next to the EXC scan usually states the specific reason and the
+next action.
+
+Q: My parcel arrived damaged. What should I do?
+A: If the contents are damaged, keep all packaging and take photos, then open a claim within
+the carrier's claim window (commonly 7 to 14 days from delivery). If damage is spotted in the
+network before delivery, the parcel is moved to DMG status and assessed before it continues.
+
+Q: Are gifts exempt from duty?
+A: Not automatically. Most countries allow a small "de-minimis" value below which no duty is
+charged, but gifts above that threshold are taxed like any other import. A gift shipment still
+needs a proforma invoice that describes the contents and states a value.
+
+Q: What is an A.TR certificate and do I need one?
+A: An A.TR is a movement certificate used for goods moving between Türkiye and the European
+Union under their customs union. Presenting a valid A.TR lets the importer claim a reduced or
+zero duty rate. It is optional, but without it the standard duty rate applies.
