@@ -80,11 +80,47 @@ One-shot mode:
 python -m src.search "who pays the customs duty?"
 ```
 
-### Step 3 — Run the API *(Milestone 2)*
+### Step 3 — Run the API
 
 ```powershell
 uvicorn src.main:app --reload
-# POST /ask  {"question": "..."}
+```
+
+Then in another terminal:
+
+```powershell
+# Ask a question
+curl -X POST http://127.0.0.1:8000/ask `
+     -H "Content-Type: application/json" `
+     -d '{"question": "who pays the customs duty?"}'
+```
+
+Sample response:
+
+```json
+{
+  "answer": "By default, the importer (the receiver) pays import duty and VAT. The exception is when the shipment is sent under the Incoterm DDP (Delivered Duty Paid), in which case the seller pays everything including import duty.",
+  "sources": [
+    {
+      "source": "shipping-faq.txt",
+      "score": 0.6626,
+      "text": "Q: Who pays the customs duty and VAT? A: By default the importer..."
+    },
+    {
+      "source": "incoterms-2020-summary.md",
+      "score": 0.7493,
+      "text": "DDP — Delivered Duty Paid. The seller delivers to the destination and pays everything..."
+    }
+  ]
+}
+```
+
+**Switching providers is one env change** — set `LLM_PROVIDER` in `.env` to
+`anthropic`, `openai_compatible`, `gemini`, or `ollama`. No code change required.
+
+```powershell
+# Health check (probes the LLM — not just config)
+curl http://127.0.0.1:8000/health
 ```
 
 ---
@@ -134,5 +170,5 @@ See `env.example` for the full list. Key ones:
 | Milestone | Status |
 |---|---|
 | M1: Ingestion + retrieval (no LLM) | ✅ Done |
-| M2: LLM generation + FastAPI `/ask` | 🔲 Next |
+| M2: LLM generation + FastAPI `/ask` | ✅ Done |
 | M3: Free deployment | 🔲 Planned |
