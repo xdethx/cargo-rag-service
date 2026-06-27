@@ -1,3 +1,13 @@
+---
+title: Cargo RAG Service
+emoji: 📦
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # Cargo RAG Service
 
 A retrieval-augmented generation (RAG) microservice that answers questions about cargo,
