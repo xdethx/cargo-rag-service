@@ -33,6 +33,18 @@ EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM
 TOP_K = int(os.getenv("TOP_K", "4"))
 
 # ---------------------------------------------------------------------------
+# Server
+# ---------------------------------------------------------------------------
+PORT = int(os.getenv("PORT", "7860"))   # default matches Hugging Face Docker Space
+
+# ---------------------------------------------------------------------------
+# Auth
+# ---------------------------------------------------------------------------
+# Shared-secret key callers must send as: Authorization: Bearer <key>
+# Fail-closed: if unset, every /ask request is rejected with 401.
+RAG_API_KEY = os.getenv("RAG_API_KEY", "")
+
+# ---------------------------------------------------------------------------
 # LLM provider (read now; not used until Milestone 2)
 # ---------------------------------------------------------------------------
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "anthropic")
