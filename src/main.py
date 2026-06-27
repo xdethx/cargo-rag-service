@@ -25,7 +25,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from src.llm import check_llm, get_chat_model
+from src.llm import get_chat_model
 from src.rag import generate, get_index
 
 
@@ -104,10 +104,11 @@ def ask(req: AskRequest):
 
 @app.get("/health")
 def health():
-    """Real liveness check — probes the LLM provider, not just config.
+    """Cheap liveness check — returns 200 immediately without calling the LLM.
 
-    Returns status "ok" only when the configured provider actually responds.
-    Status "degraded" means the service is running but the LLM is unreachable.
+    Safe for frequent keep-warm pings and deploy probes (no tokens billed,
+    no provider rate-limit consumption). Reports the configured provider and
+    model so operators can verify the right settings are in place.
     """
     provider = config.LLM_PROVIDER
     model = {
@@ -117,11 +118,9 @@ def health():
         "gemini":            config.GEMINI_MODEL,
     }.get(provider, "unknown")
 
-    ok, detail = check_llm()
+    return {"status": "ok", "provider": provider, "model": model}
 
-    return {
-        "status":   "ok" if ok else "degraded",
-        "provider": provider,
-        "model":    model,
-        "llm":      detail,
-    }
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("src.main:app", host="0.0.0.0", port=config.PORT)

@@ -1,5 +1,9 @@
 # Starter dependencies — Claude Code can pin exact versions during scaffolding.
 
+# CPU-only torch wheel — keeps the Docker image small (no CUDA)
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.12.1+cpu
+
 # API
 fastapi
 uvicorn[standard]

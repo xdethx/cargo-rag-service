@@ -1,0 +1,27 @@
+# Secrets — never bake into the image
+.env
+.env.local
+
+# Python artifacts
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Dev/test files not needed at runtime
+tests/
+journal/
+CLAUDE.md
+
+# Git history (large; not needed in the image)
+.git/
+
+# Source docs are only needed for ingest (offline), not at runtime.
+# data/index/ is intentionally NOT excluded — the prebuilt FAISS index is
+# committed to the repo and copied into the image by the Dockerfile.
+data/docs/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
