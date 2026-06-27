@@ -23,6 +23,39 @@ A separate .NET shipment-tracking app calls this service over HTTP.
 
 ---
 
+## Live demo
+
+Deployed on a Hugging Face Docker Space:
+
+**https://dethx-ragtest.hf.space**
+
+- `GET /health` is **public** — a cheap liveness check (no LLM call). Try
+  [`/health`](https://dethx-ragtest.hf.space/health).
+- `POST /ask` requires an `Authorization: Bearer <RAG_API_KEY>` header.
+
+## Calling the API
+
+```bash
+curl -X POST https://dethx-ragtest.hf.space/ask \
+     -H "Authorization: Bearer $RAG_API_KEY" \
+     -H "Content-Type: application/json" \
+     -d '{"question": "who pays the customs duty?"}'
+```
+
+Every answer comes back **with the source chunks it was grounded on** — an
+answer without sources is a bug, since grounding is the whole point of RAG:
+
+```json
+{
+  "answer": "By default, the importer (the receiver) pays import duty and VAT...",
+  "sources": [
+    { "source": "shipping-faq.txt", "score": 0.6626, "text": "Q: Who pays the customs duty and VAT? A: ..." }
+  ]
+}
+```
+
+---
+
 ## Architecture
 
 The key design decision is the **offline / online split**:
@@ -98,9 +131,13 @@ uvicorn src.main:app --reload
 
 Then in another terminal:
 
+`/ask` is protected (fail-closed): set `RAG_API_KEY` in `.env` and send it as a
+Bearer token, or every request returns `401`.
+
 ```powershell
 # Ask a question
 curl -X POST http://127.0.0.1:8000/ask `
+     -H "Authorization: Bearer $env:RAG_API_KEY" `
      -H "Content-Type: application/json" `
      -d '{"question": "who pays the customs duty?"}'
 ```
@@ -129,9 +166,23 @@ Sample response:
 `anthropic`, `openai_compatible`, `gemini`, or `ollama`. No code change required.
 
 ```powershell
-# Health check (probes the LLM — not just config)
+# Health check — cheap liveness probe (no LLM call); reports the effective provider/model
 curl http://127.0.0.1:8000/health
 ```
+
+---
+
+## Deployment
+
+Deployed as a **Hugging Face Docker Space** (the container listens on port `7860`).
+
+- The prebuilt **FAISS index** and the **embedding model** are baked into the Docker image
+  at build time. Cold starts are fast and the container is self-contained — no model
+  download on a non-root, ephemeral filesystem.
+- The cloud LLM runs via `LLM_PROVIDER=openai_compatible` pointed at **Groq**; embeddings
+  stay **local** (the same sentence-transformers model used at ingest).
+- Runtime configuration — LLM provider, Groq base URL and model, and the API key — is set
+  through the Space's **Variables & Secrets**, never committed to the repo.
 
 ---
 
@@ -151,7 +202,7 @@ is connected.
 
 ```
 data/docs/      source cargo/customs documents (.md, .txt, .pdf)
-data/index/     prebuilt FAISS index (output of ingest; gitignored)
+data/index/     prebuilt FAISS index (output of ingest; committed so it ships in the image)
 src/config.py   env settings + shared get_embeddings()
 src/ingest.py   offline: load -> chunk -> embed -> save index
 src/rag.py      retrieve -> (M2) grounded prompt -> generate
@@ -169,9 +220,14 @@ See `env.example` for the full list. Key ones:
 
 | Variable | Description | Default |
 |---|---|---|
-| `LLM_PROVIDER` | `anthropic` \| `openai_compatible` \| `gemini` \| `ollama` | `gemini` |
+| `LLM_PROVIDER` | `anthropic` \| `openai_compatible` \| `gemini` \| `ollama` | `anthropic` |
+| `RAG_API_KEY` | Shared secret for `POST /ask` (Bearer token); unset → every request `401` | _(empty)_ |
 | `EMBEDDING_MODEL` | HuggingFace model name | `sentence-transformers/all-MiniLM-L6-v2` |
 | `TOP_K` | Chunks returned per query | `4` |
+| `PORT` | Port the API listens on (via `python -m src.main`) | `7860` |
+
+For Groq (the deployed setup), set `LLM_PROVIDER=openai_compatible` plus
+`OPENAI_COMPAT_BASE_URL`, `OPENAI_COMPAT_MODEL`, and `OPENAI_COMPAT_API_KEY`.
 
 ---
 
@@ -181,4 +237,4 @@ See `env.example` for the full list. Key ones:
 |---|---|
 | M1: Ingestion + retrieval (no LLM) | ✅ Done |
 | M2: LLM generation + FastAPI `/ask` | ✅ Done |
-| M3: Free deployment | 🔲 Planned |
+| M3: Deployment (Hugging Face Docker Space + auth + rate limit) | ✅ [Live](https://dethx-ragtest.hf.space) |
