@@ -23,5 +23,8 @@ langchain-openai           # OpenAI-compatible: Grok / Groq / OpenRouter
 langchain-google-genai     # Gemini
 langchain-ollama           # local Ollama
 
+# Rate limiting
+slowapi
+
 # Tests
 pytest
